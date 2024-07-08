@@ -27,8 +27,8 @@ public class EventBus {
         transactions.add(transaction);
     }
 
-    public DistributedTransaction receiveTransaction(String eventId) {
-        DistributedTransaction transaction = transactions.stream().filter(tx -> tx.getId().equals(eventId)).findAny().orElse(null);
+    public DistributedTransaction receiveTransaction(String transactionId) {
+        DistributedTransaction transaction = transactions.stream().filter(tx -> tx.getId().equals(transactionId)).findAny().orElse(null);
         if (transaction != null) {
             transactions.remove(transaction);
         }
@@ -39,10 +39,10 @@ public class EventBus {
         events.add(event);
     }
 
-    public ProductTransactionEvent receiveEvent(String eventId) {
+    public ProductTransactionEvent receiveEvent(String transactionId) {
         ProductTransactionEvent event = null;
         while (event == null) {
-            event = events.stream().filter(evnt -> evnt.getTransactionId().equals(eventId)).findAny().orElse(null);
+            event = events.stream().filter(evnt -> evnt.getTransactionId().equals(transactionId)).findAny().orElse(null);
             events.remove(event);
             if (event != null) {
                 return event;
@@ -50,7 +50,7 @@ public class EventBus {
             try {
                 TimeUnit.MILLISECONDS.sleep(10);
             } catch (InterruptedException ex) {
-                log.error("Error while received event for: {}, Cause:{}", eventId, ex);
+                log.error("Error while received event for: {}, Cause:{}", transactionId, ex);
             }
         }
         return event;
